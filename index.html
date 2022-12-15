@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>fsadvent</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="Content/fsadvent.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <style>
+        /* Don't show the not-yet-loaded templates */
+        [ws-template], [ws-children-template] {
+            display: none;
+        }
+        body {
+            font-size: 1em;
+        }
+        .holder {
+            display: flex;
+        }
+
+        .selectedDisplay {
+            text-align: center;
+            margin-top: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .selectedDisplay span {
+            display: flex;
+            width: 4em;
+            height: 2em;
+            font-size: 1.5em;
+            background: #585e62;
+            margin: 5px;
+            justify-content: center;
+            align-content: center;
+        }
+
+        canvas {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        span.highlighted {
+            background-color: #61bff9 !important;
+        }
+
+        .display {
+            flex: 1;
+        }
+
+        .form {
+            width: 25%;
+            padding-top: 20px;
+            padding-left: 30px;
+        }
+    </style>
+    <script type="text/javascript" src="Content/fsadvent.head.js"></script>
+</head>
+<body>
+    <div id="main" ws-children-template="Main">
+        <div class="holder">
+            <div class="form">
+                <label for="numberToReach">
+                    Please provide a number between 1 and 180:
+                    <input type="number" min="1" max="180" ws-var="SelectedNumber" />
+                </label>
+                <label for="numberToReach">
+                    Does it need to be a checkout combination?
+                    <input type="checkbox" ws-var="IsItCheckout" />
+                </label>
+                <button ws-onclick="Calculate">Calculate!</button>
+                <div>Results:</div>
+                <div ws-hole="SelectionBox"></div>
+                <div class="selectedDisplay"><span id="dart1">${Selected1}</span><span id="dart2">${Selected2}</span><span id="dart3">${Selected3}</span></div>
+            </div>
+            <div class="display">
+                <canvas ws-attr="CanvasAttr" width="600" height="600"></canvas>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="Content/fsadvent.min.js"></script>
+</body>
+</html>
