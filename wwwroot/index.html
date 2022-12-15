@@ -17,6 +17,9 @@
         .holder {
             display: flex;
         }
+        #main, .holder {
+            height: 100vh;
+        }
 
         .selectedDisplay {
             text-align: center;
@@ -34,7 +37,7 @@
             background: #585e62;
             margin: 5px;
             justify-content: center;
-            align-content: center;
+            align-items: center;
         }
 
         canvas {
@@ -53,8 +56,11 @@
 
         .form {
             width: 25%;
+            height: 100%;
             padding-top: 20px;
             padding-left: 30px;
+            padding-right: 30px;
+            background-color: #0c1216;
         }
     </style>
     <script type="text/javascript" src="Content/fsadvent.head.js"></script>
@@ -65,11 +71,11 @@
             <div class="form">
                 <label for="numberToReach">
                     Please provide a number between 1 and 180:
-                    <input type="number" min="1" max="180" ws-var="SelectedNumber" />
+                    <input id="numberToReach" type="number" min="1" max="180" ws-var="SelectedNumber" />
                 </label>
-                <label for="numberToReach">
+                <label for="isItCheckout">
                     Does it need to be a checkout combination?
-                    <input type="checkbox" ws-var="IsItCheckout" />
+                    <input id="isItCheckout" type="checkbox" ws-var="IsItCheckout" />
                 </label>
                 <button ws-onclick="Calculate">Calculate!</button>
                 <div>Results:</div>

@@ -41,20 +41,21 @@ module Client =
              
     type DartsSet = Dart * Dart * Dart
 
-    let PrettyPrintDartsSet (d : DartsSet) =
+    let PrettyPrintDartsSet (d : DartsSet option) =
         match d with
-        | (d1, Nil, Nil) -> 
+        | Some (d1, Nil, Nil) -> 
             sprintf "%s"
                 (Dart.AsDartNotation d1)
-        | (d1, d2, Nil) -> 
+        | Some (d1, d2, Nil) -> 
             sprintf "%s - %s"
                 (Dart.AsDartNotation d1)
                 (Dart.AsDartNotation d2)
-        | (d1, d2, d3) -> 
+        | Some (d1, d2, d3) -> 
             sprintf "%s - %s - %s"
                 (Dart.AsDartNotation d1)
                 (Dart.AsDartNotation d2)
                 (Dart.AsDartNotation d3)
+        | _ -> "None"
 
     let scoringValues =
         [
@@ -108,24 +109,21 @@ module Client =
             )
         )
         |> List.collect (fun (d1, d2, d3) ->
+            let getFilteredByCheckout (items: Dart list) =
+                if isItCheckout then
+                    items |> List.filter Dart.IsCheckout
+                else
+                    items
             match scoringValues.TryGetValue(d1), scoringValues.TryGetValue(d2), scoringValues.TryGetValue(d3) with
             | (true, items1), (true, [Nil]), (true, [Nil]) ->
-                if isItCheckout then
-                    items1 |> List.filter Dart.IsCheckout |> List.map (fun x -> x, Nil, Nil)
-                else
-                    items1 |> List.map (fun x -> x, Nil, Nil)
+                getFilteredByCheckout items1 |> List.map (fun x -> Some (x, Nil, Nil))
             | (true, items1), (true, items2), (true, [Nil]) ->
-                if isItCheckout then
-                    items1 |> List.collect (fun x -> items2 |> List.filter Dart.IsCheckout |> List.map (fun y -> x, y, Nil))
-                else
-                    items1 |> List.collect (fun x -> items2 |> List.map (fun y -> x, y, Nil))
+                items1 |> List.collect (fun x -> getFilteredByCheckout items2 |> List.map (fun y -> Some (x, y, Nil)))
             | (true, items1), (true, items2), (true, items3) ->
-                if isItCheckout then
-                    items1 |> List.collect (fun x -> items2 |> List.collect (fun y -> items3 |> List.filter Dart.IsCheckout |> List.map (fun z -> x, y, z)))
-                else
-                    items1 |> List.collect (fun x -> items2 |> List.collect (fun y -> items3 |> List.map (fun z -> x, y, z)))
+                items1 |> List.collect (fun x -> items2 |> List.collect (fun y -> getFilteredByCheckout items3 |> List.map (fun z -> Some (x, y, z))))
             | _ -> []
         )
+        |> List.sortBy (fun (Some (a, b, _)) -> a, b)
 
 
     let resetBoard (ctx: CanvasRenderingContext2D) =
@@ -167,7 +165,7 @@ module Client =
         ctx.StrokeStyle <- "white"
         ctx.FillStyle <- "white"
         ctx.Font <- "30px Arial"
-        ctx.TextAlign <- TextAlign.Center
+        ctx.TextAlign <- CanvasTextAlign.Center
         ctx.Translate(WIDTH/2., HEIGHT/2.)
         // The second quadrant should match the orientation of the fourth one
         if nth > 5 && nth < 10 then
@@ -257,7 +255,7 @@ module Client =
         let selected = Var.Create None
         let numberToReach = Var.Create 1
         let isItCheckout = Var.Create false
-        let results = Var.Create []
+        let results = Var.Create [None]
         IndexTemplate.Main()
             .CanvasAttr(
                 [
@@ -268,6 +266,7 @@ module Client =
                             | None -> ()
                             | Some handle ->
                                 JS.ClearInterval handle
+                                JS.Document.QuerySelector("span.highlighted") |> fun x -> if x !==. null then x.ClassList.Remove("highlighted")
                                 animationHandle.Set None
                         )
                         let canvasElement = As<CanvasElement> elem
@@ -302,14 +301,19 @@ module Client =
                         let res = getCombinationsFor number checkout
                         if res.Length = 0 then
                             JS.Alert <| sprintf "%d cannot be reached with 3 darts! Please try a different number." number
-                        results.Set res
-                        selected.Set None
+                        results.Set (None::res)
+                        if res.Length > 1 then
+                            res |> List.head |> selected.Set 
+                        else
+                            selected.Set None
                     )
-                
                 )
             )
             .SelectionBox(
-                Doc.SelectDynOptional [] "None" PrettyPrintDartsSet results.View selected
+                results.View
+                |> Doc.BindView (fun options ->
+                    Doc.InputType.Select [] PrettyPrintDartsSet options selected
+                )
             )
             .Doc()
         |> Doc.RunById "main"
