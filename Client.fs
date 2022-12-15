@@ -167,7 +167,7 @@ module Client =
         ctx.StrokeStyle <- "white"
         ctx.FillStyle <- "white"
         ctx.Font <- "30px Arial"
-        ctx.TextAlign <- CanvasTextAlign.Center
+        ctx.TextAlign <- TextAlign.Center
         ctx.Translate(WIDTH/2., HEIGHT/2.)
         // The second quadrant should match the orientation of the fourth one
         if nth > 5 && nth < 10 then
