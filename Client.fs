@@ -309,7 +309,7 @@ module Client =
                 )
             )
             .SelectionBox(
-                Doc.InputType.SelectDynOptional [] "None" PrettyPrintDartsSet results.View selected
+                Doc.SelectDynOptional [] "None" PrettyPrintDartsSet results.View selected
             )
             .Doc()
         |> Doc.RunById "main"
