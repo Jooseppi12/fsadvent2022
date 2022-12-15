@@ -10,8 +10,8 @@ open WebSharper.UI.Templating
 module Client =
     type IndexTemplate = Template<"wwwroot/index.html", ClientLoad.FromDocument>
 
-    let WIDTH = 600.
-    let HEIGHT = 600.
+    let mutable WIDTH = 600.
+    let mutable HEIGHT = 600.
     let animationHandle : Var<JS.Handle option> = Var.Create None
 
     type Dart =
@@ -218,10 +218,10 @@ module Client =
 
         let colorSmallBull = if dartToHighlight = Single 25 then hightlightColor else "#389536"
         let colorBigBull = if dartToHighlight = Double 25 then hightlightColor else "#e63322"
-        // draw small bullseye point
+        // draw small bullseye
         renderCircle ctx (scoringRadius * 0.094) colorSmallBull
 
-        // draw bulls eye
+        // draw bullseye
         renderCircle ctx (scoringRadius * 0.037) colorBigBull
 
     let highlightDartboard (ctx: CanvasRenderingContext2D) (currentSelection: DartsSet option) =
@@ -275,6 +275,9 @@ module Client =
                     )
                     on.afterRender (fun elem ->
                         let canvasElement = As<CanvasElement> elem
+                        WIDTH <- canvasElement.Width
+                        HEIGHT <- canvasElement.Width
+                        canvasElement.Height <- int HEIGHT
                         let context = canvasElement.GetContext("2d")
                         drawDartboard context Nil
                     )
