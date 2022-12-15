@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <title>fsadvent</title>
     <meta charset="utf-8" />
@@ -42,6 +42,8 @@
 
         canvas {
             display: block;
+            width: 95%;
+            max-width: 600px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -62,6 +64,17 @@
             padding-right: 30px;
             background-color: #0c1216;
         }
+
+        @media only screen and (max-width: 768px) {
+            .holder {
+                display: block;
+            }
+
+            .form {
+                width: 100%;
+            }
+        }
+
     </style>
     <script type="text/javascript" src="Content/fsadvent.head.js"></script>
 </head>

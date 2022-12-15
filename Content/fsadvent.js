@@ -538,6 +538,9 @@ if(!p.closest){p.closest=function(s){var e=this;while(e&&e.nodeType==1){if(e.mat
    };
   },selected.get_View()),AttrModule.OnAfterRender(function(elem)
   {
+   Client.set_WIDTH(elem.width);
+   Client.set_HEIGHT(elem.width);
+   elem.height=Operators.toInt(Client.HEIGHT());
    Client.drawDartboard(elem.getContext("2d"),Dart.Nil);
   })]),(_this$6=new ProviderBuilder.New$1(),(_this$6.h.push({
    $:3,
@@ -636,6 +639,21 @@ if(!p.closest){p.closest=function(s){var e=this;while(e&&e.nodeType==1){if(e.mat
    }
   else
    Client.drawDartboard(ctx,Dart.Nil);
+ };
+ Client.set_WIDTH=function($1)
+ {
+  SC$1.$cctor();
+  SC$1.WIDTH=$1;
+ };
+ Client.set_HEIGHT=function($1)
+ {
+  SC$1.$cctor();
+  SC$1.HEIGHT=$1;
+ };
+ Client.HEIGHT=function()
+ {
+  SC$1.$cctor();
+  return SC$1.HEIGHT;
  };
  Client.drawDartboard=function(ctx,dartToHighlight)
  {
@@ -868,11 +886,6 @@ if(!p.closest){p.closest=function(s){var e=this;while(e&&e.nodeType==1){if(e.mat
  {
   SC$1.$cctor();
   return SC$1.scoringValues;
- };
- Client.HEIGHT=function()
- {
-  SC$1.$cctor();
-  return SC$1.HEIGHT;
  };
  Client.convertToRadian=function(deg)
  {
@@ -1107,6 +1120,16 @@ if(!p.closest){p.closest=function(s){var e=this;while(e&&e.nodeType==1){if(e.mat
  List.tail=function(l)
  {
   return l.$==1?l.$1:List.listEmpty();
+ };
+ Operators.toInt=function(x)
+ {
+  var u;
+  u=Operators.toUInt(x);
+  return u>=2147483648?u-4294967296:u;
+ };
+ Operators.toUInt=function(x)
+ {
+  return(x<0?Math.ceil(x):Math.floor(x))>>>0;
  };
  Operators.FailWith=function(msg)
  {
